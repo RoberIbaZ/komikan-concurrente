@@ -1,0 +1,4 @@
+torneo
+*.o
+*.dSYM/
+logs/
