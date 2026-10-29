@@ -2,3 +2,4 @@ torneo
 *.o
 *.dSYM/
 logs/
+pruebas_juego/bin/
