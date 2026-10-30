@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     }
     double t_abort = 0;
     if (abortar_ms >= 0) {
-        usleep(abortar_ms * 1000);
+        nanosleep(&(struct timespec){ abortar_ms / 1000, (abortar_ms % 1000) * 1000000L }, NULL);
         t_abort = ahora_ms();
         mesa_abortar(mesas[0]);
     }
