@@ -1,0 +1,4 @@
+min_ms=5
+max_ms=20
+prob_fallo=0.01
+llegada_max_ms=50

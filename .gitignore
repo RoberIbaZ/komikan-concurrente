@@ -3,3 +3,4 @@ torneo
 *.dSYM/
 logs/
 pruebas_juego/bin/
+torneo_tsan

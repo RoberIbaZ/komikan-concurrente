@@ -1,0 +1,12 @@
+# Retardo minimo y maximo (ms) entre movimientos de cada ficha
+min_ms=50
+max_ms=300
+# Semilla para reproducibilidad (entero sin signo)
+seed=42
+# Probabilidad [0,1] de que una ficha falle en cada ciclo
+prob_fallo=0
+# Retardo maximo (ms) de llegada de cada cliente
+llegada_max_ms=200
+# Disposicion inicial: nodo del puma y 12 nodos de los perros (0..30)
+# pos_puma=12
+# pos_perros=0,1,2,3,4,5,6,7,8,9,10,11
