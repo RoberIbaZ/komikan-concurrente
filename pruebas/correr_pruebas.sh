@@ -63,7 +63,7 @@ ok "SIGINT (cierre en ${DUR}s, codigo $RC)" "[ $DUR -lt 3 ] && [ $RC -eq 130 ] &
 correr 300 ./torneo 10 3 pruebas/config_fallos.txt
 ok "fallos simulados" "[ $RC -eq 0 ] && grep -q 'Resumen: partidas=5 ' $OUT"
 
-correr 300 ./torneo_tsan 10 3 pruebas/config_rapido.txt
+correr 300 $(command -v setarch >/dev/null && echo "setarch $(uname -m) -R") ./torneo_tsan 10 3 pruebas/config_rapido.txt
 ok "ThreadSanitizer" "[ $RC -eq 0 ] && ! grep -q 'WARNING: ThreadSanitizer' $OUT"
 
 if [ "$(uname)" = Darwin ]; then
@@ -73,6 +73,17 @@ if [ "$(uname)" = Darwin ]; then
     (perl -e '$SIG{INT}="DEFAULT"; exec @ARGV' leaks --atExit -- ./torneo 40 4 pruebas/config_lenta.txt > $OUT 2>&1 &)
     sleep 2; pkill -INT -x torneo; sleep 4
     ok "leaks con SIGINT" "grep -q ' 0 leaks for 0 total leaked bytes' $OUT"
+elif command -v valgrind >/dev/null; then
+    VG="valgrind --leak-check=full --show-leak-kinds=all --error-exitcode=9"
+    correr 300 $VG ./torneo 10 3 pruebas/config_rapido.txt
+    ok "valgrind" "[ $RC -eq 0 ] && grep -q 'in use at exit: 0 bytes' $OUT"
+    perl -e '$SIG{INT}="DEFAULT"; exec @ARGV' $VG ./torneo 40 4 pruebas/config_lenta.txt > $OUT 2>&1 &
+    PID=$!
+    sleep 4
+    kill -INT $PID
+    wait $PID
+    RC=$?
+    ok "valgrind con SIGINT" "[ $RC -eq 130 ] && grep -q 'in use at exit: 0 bytes' $OUT"
 fi
 
 [ $FALLOS -eq 0 ] && echo "TODO OK" || echo "$FALLOS fallos"
